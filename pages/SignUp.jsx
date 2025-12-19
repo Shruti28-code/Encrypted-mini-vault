@@ -4,7 +4,7 @@ import { supabase } from "../supabase";
 
 export default function Signup() {
     const navigate = useNavigate();
-
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -17,7 +17,8 @@ export default function Signup() {
         const cleanEmail = email.trim();
         const cleanPassword = password.trim();
 
-        if (!cleanEmail || !cleanPassword) {
+
+        if (!cleanEmail || !cleanPassword || !name) {
             alert("Email or password cannot be empty");
             return;
         }
@@ -25,7 +26,14 @@ export default function Signup() {
         const { data, error } = await supabase.auth.signUp({
             email: cleanEmail,
             password: cleanPassword,
+
         });
+        if (data?.user) {
+            await supabase.from("profiles").insert({
+                id: data.user.id,
+                full_name: name,
+            });
+        }
 
         if (error) {
             alert(error.message);
@@ -95,6 +103,16 @@ export default function Signup() {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
+                                className="w-full rounded-lg border border-white/10 bg-[#1A1D21] h-12 px-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#06f9c8]/50 transition-all"
+                            />
+                        </label>
+                        <label className="flex flex-col">
+                            <p className="text-slate-400 text-sm font-medium pb-2">Name</p>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 placeholder="Enter your password"
                                 className="w-full rounded-lg border border-white/10 bg-[#1A1D21] h-12 px-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#06f9c8]/50 transition-all"
                             />
