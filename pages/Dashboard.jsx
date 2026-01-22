@@ -24,6 +24,26 @@ export default function Dashboard() {
 
         loadProfile();
     }, []);
+    const fetchRecentDocuments = async () => {
+        const { data, error } = await supabase
+            .from("documents")
+            .select("id, file_name, file_size, created_at")
+            .order("created_at", { ascending: false })
+            .limit(3);
+
+        if (error) {
+            console.error("Error fetching documents:", error);
+            return [];
+        }
+
+        return data;
+    };
+    const [documents, setDocuments] = useState([]);
+
+    useEffect(() => {
+        fetchRecentDocuments().then(setDocuments);
+    }, []);
+
 
     return (
         <div className="flex flex-col h-screen text-gray-300 bg-[#0E1117] font-display">
@@ -76,41 +96,44 @@ export default function Dashboard() {
                                 <th className="py-3 px-4">Size</th>
                             </tr>
                         </thead>
-
                         <tbody>
-                            <tr className="border-b border-white/10 hover:bg-white/5">
-                                <td className="py-4 px-4 flex items-center gap-3 text-white">
-                                    <span className="material-symbols-outlined text-primary">
-                                        description
-                                    </span>
-                                    Client_Contract_v3.pdf
-                                </td>
-                                <td className="py-4 px-4">Today, 11:45 AM</td>
-                                <td className="py-4 px-4">2.1 MB</td>
-                            </tr>
+                            {documents.map((doc) => (
+                                <tr
+                                    key={doc.id}
+                                    className="border-b border-white/10 hover:bg-white/5"
+                                >
+                                    <td className="py-4 px-4 flex items-center gap-3 text-white">
+                                        <span className="material-symbols-outlined text-primary">
 
-                            <tr className="border-b border-white/10 hover:bg-white/5">
-                                <td className="py-4 px-4 flex items-center gap-3 text-white">
-                                    <span className="material-symbols-outlined text-primary">
-                                        description
-                                    </span>
-                                    Project_Proposal_Final.docx
-                                </td>
-                                <td className="py-4 px-4">Yesterday, 3:30 PM</td>
-                                <td className="py-4 px-4">5.7 MB</td>
-                            </tr>
+                                        </span>
+                                        {doc.file_name}
+                                    </td>
 
-                            <tr className="hover:bg-white/5">
-                                <td className="py-4 px-4 flex items-center gap-3 text-white">
-                                    <span className="material-symbols-outlined text-primary">
-                                        description
-                                    </span>
-                                    Invoice_Q4_2023.xlsx
-                                </td>
-                                <td className="py-4 px-4">October 28, 2023</td>
-                                <td className="py-4 px-4">780 KB</td>
-                            </tr>
+                                    <td className="py-4 px-4">
+                                        {new Date(doc.created_at).toLocaleString("en-IN", {
+                                            dateStyle: "medium",
+                                            timeStyle: "short",
+                                        })}
+                                    </td>
+
+                                    <td className="py-4 px-4">
+                                        {(doc.file_size / 1024 / 1024).toFixed(2)} MB
+                                    </td>
+                                </tr>
+                            ))}
+
+                            {documents.length === 0 && (
+                                <tr className="hover:bg-white/5">
+                                    <td
+                                        colSpan="3"
+                                        className="py-4 px-4 text-center text-white/60"
+                                    >
+                                        No documents uploaded yet
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
+
                     </table>
                 </div>
             </main>

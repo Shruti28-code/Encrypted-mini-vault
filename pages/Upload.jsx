@@ -1,137 +1,197 @@
-// import React from "react";
+import React, { useState } from "react";
+import { supabase } from "../supabase"; // <-- import your client
+import { encryptFile } from "../src/utils/crypto";
 
-// const Upload = () => {
-//     return (
-//         <div className="font-display bg-background-light dark:bg-background-dark min-h-screen w-full flex flex-col items-center">
-//             {/* Top Navbar */}
-//             <header className="flex w-full max-w-5xl items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 py-4 md:px-10 md:py-3">
-//                 <div className="flex items-center gap-4 text-white">
-//                     <div className="size-6 text-primary">
-//                         <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-//                             <path
-//                                 clipRule="evenodd"
-//                                 d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z"
-//                                 fill="currentColor"
-//                                 fillRule="evenodd"
-//                             ></path>
-//                         </svg>
-//                     </div>
-//                     <h2 className="text-white text-lg font-bold">Encrypted Mini Vault</h2>
-//                 </div>
-
-//                 <div className="flex flex-1 items-center justify-end gap-4">
-//                     <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition-colors">
-//                         <span className="material-symbols-outlined text-xl">settings</span>
-//                     </button>
-//                     <div
-//                         className="aspect-square size-10 rounded-full bg-cover bg-center bg-no-repeat"
-//                         style={{
-//                             backgroundImage:
-//                                 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuByIoaCrOGN8SJLMLox5mfcf1N-XGMyD_oDBCtDSsfBtE1uSK3dqQ_QS09cc1umEG_2BDQLcbMooj_aE74m-pzA7V2YUaqs_RBRuL4y3sh52zrImT_vnqGs6n3BAY16wENkD-aX-zCBih9So67RvpI1vX6LYlYWOO8FjkDN2QX4dc9FPMg36FLZ83BUMkNqcV6CzgyQJ-S5ecJw9-S6aqUZCZXJ58xR8WISZ4OcUEF2lGF-KtceH5ujDl-txPuY5uaiheQEfYk7WQ")',
-//                         }}
-//                     ></div>
-//                 </div>
-//             </header>
-
-//             {/* Main Content */}
-//             <main className="flex w-full max-w-5xl flex-1 flex-col justify-center px-4 py-10 md:px-10">
-//                 <div className="mx-auto w-full max-w-2xl rounded-xl bg-[#1A1D23] p-6 md:p-8">
-//                     {/* Heading */}
-//                     <div className="flex flex-col gap-2">
-//                         <h1 className="text-white text-3xl md:text-4xl font-black leading-tight">
-//                             Securely Upload a Document
-//                         </h1>
-//                         <p className="text-white/60 text-base">
-//                             Drag & drop your file below or select a file to upload.
-//                         </p>
-//                     </div>
-
-//                     <div className="mt-8 space-y-6">
-//                         {/* Empty State Dropzone */}
-//                         <div className="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-white/20 px-6 py-14 hover:border-primary/50 hover:bg-primary/5 transition-all">
-//                             <div className="flex flex-col items-center gap-2 text-center">
-//                                 <span className="material-symbols-outlined text-5xl text-white/50">
-//                                     upload_file
-//                                 </span>
-//                                 <p className="text-white text-lg font-bold">Drag & drop your file here</p>
-//                                 <p className="text-white/60 text-sm">or click to browse</p>
-//                             </div>
-//                             <button className="h-10 px-5 bg-primary text-background-dark rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
-//                                 Select File to Upload
-//                             </button>
-//                         </div>
-
-//                         {/* Divider */}
-//                         <div className="h-px w-full bg-white/10"></div>
-
-//                         {/* Selected File Preview */}
-//                         <div>
-//                             <p className="mb-4 text-sm font-medium text-white/80">File to upload:</p>
-//                             <div className="flex items-center gap-4 rounded-lg bg-white/5 px-4 min-h-[72px] py-2 justify-between">
-//                                 <div className="flex items-center gap-4 min-w-0">
-//                                     <div className="text-primary bg-primary/20 size-12 rounded-lg flex items-center justify-center">
-//                                         <span className="material-symbols-outlined text-3xl">draft</span>
-//                                     </div>
-//                                     <div className="flex flex-col min-w-0">
-//                                         <p className="text-white text-base truncate">project-proposal-final-v2.docx</p>
-//                                         <p className="text-white/60 text-sm">1.8 MB</p>
-//                                     </div>
-//                                 </div>
-//                                 <button className="text-white/60 hover:text-white transition-colors">
-//                                     <span className="material-symbols-outlined text-2xl">close</span>
-//                                 </button>
-//                             </div>
-//                         </div>
-
-//                         {/* Upload Progress */}
-//                         <div>
-//                             <p className="mb-4 text-sm font-medium text-white/80">Upload progress:</p>
-//                             <div className="flex flex-col gap-3 rounded-lg bg-white/5 p-4">
-//                                 <div className="flex justify-between">
-//                                     <p className="text-white text-base font-medium">Uploading...</p>
-//                                     <p className="text-primary text-sm font-bold">65%</p>
-//                                 </div>
-
-//                                 <div className="w-full rounded-full bg-black/30">
-//                                     <div className="h-2 rounded-full bg-primary" style={{ width: "65%" }}></div>
-//                                 </div>
-
-//                                 <p className="text-white/60 text-sm">client-contract.pdf</p>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </main>
-//         </div>
-//     );
-// };
-
-// export default Upload;
-
-import { supabase } from "../supabase";
-export default function Upload() {
-    const testInsert = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        console.log("USER:", user);
-        const { data, error } = await supabase.from("documents").insert({
-            file_name: "test.txt",
-            file_path: "test/path",
-
-
-        });
-
-
-        console.log("DATA:", data);
-        console.log("ERROR:", error);
+import { useEncryption } from "../src/context/EncryptionContext";
 
 
 
+const Upload = () => {
+    const { encryptionKey } = useEncryption();
 
-        console.log(error ?? "Insert success");
+    if (!encryptionKey) {
+        throw new Error("Encryption key not ready");
+    }
+
+    const [file, setFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [message, setMessage] = useState("");
+
+    const handleFileChange = (e) => {
+        const selected = e.target.files[0];
+        if (!selected) return;
+
+        // allow only supported types
+        const allowed = ["application/pdf", "image/png", "image/jpeg", "image/jpg"];
+        if (!allowed.includes(selected.type)) {
+            setMessage("Only PDF and Image files are allowed.");
+            return;
+        }
+
+        setFile(selected);
+        setMessage("");
     };
+
+
+    const handleUpload = async () => {
+        if (!file) return;
+
+        try {
+            setUploading(true);
+
+            // 1️⃣ Get logged-in user
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser();
+
+            if (userError || !user) {
+                throw new Error("User not authenticated");
+            }
+
+            if (!encryptionKey) {
+                throw new Error("Encryption key not initialized");
+            }
+
+            console.log("Logged in user id:", user.id);
+
+            // 2️⃣ Generate unique path
+            const fileId = crypto.randomUUID();
+            const filePath = `${user.id}/${fileId}/${file.name}`;
+
+            // 3️⃣ 🔐 Encrypt file BEFORE upload
+            const { encryptedBlob, iv } = await encryptFile(file, encryptionKey);
+
+            // 4️⃣ Upload encrypted file
+            const { error: uploadError } = await supabase.storage
+                .from("encrypted-vault")
+                .upload(filePath, encryptedBlob, {
+                    upsert: false,
+                    contentType: "application/octet-stream",
+                });
+
+            if (uploadError) {
+                throw uploadError;
+            }
+
+            // 5️⃣ Store metadata + IV
+            const { error: dbError } = await supabase
+                .from("documents")
+                .insert({
+                    user_id: user.id,
+                    file_name: file.name,
+                    file_path: filePath,
+                    file_size: file.size,
+                    file_type: file.type,
+                    iv: iv, // 🔐 critical
+                });
+
+            if (dbError) {
+                throw dbError;
+            }
+
+            alert("Encrypted file uploaded successfully ✅");
+            console.log("Original file size:", file.size);
+            console.log("Encrypted blob size:", encryptedBlob.size);
+            console.log("IV:", iv);
+            console.log("Key:", encryptionKey);
+
+        } catch (error) {
+            console.error("Upload failed:", error.message);
+            alert(error.message);
+        } finally {
+            setUploading(false);
+            setProgress(0);
+        }
+    };
+
     return (
-        <>
-            <button onClick={testInsert}>Test Insert</button>
-        </>
-    )
-}
+        <div className="font-display bg-background-light dark:bg-background-dark min-h-screen w-full flex flex-col items-center">
+            {/* Navbar */}
+            <header className="flex w-full max-w-5xl items-center justify-between border-b border-white/10 px-4 py-4 md:px-10">
+                <div className="flex items-center gap-3 text-white">
+                    <div className="size-6 text-primary">
+                        <svg fill="none" viewBox="0 0 48 48">
+                            <path
+                                fill="currentColor"
+                                d="M39.4 21.6c.9-.2 1.2-.1 1.3 0 .1.1.2.4.1 1-.1.7-.4 1.7-1 2.9-1.2 2.4-3.4 5.4-6.3 8.3-2.9 2.9-5.9 5.1-8.3 6.3-1.2.6-2.2.9-2.9 1-.6.1-.9 0-1-.1-.1-.1-.2-.4 0-1 .2-.9.8-2.3 1.9-4 .9-1.4 2.2-3 3.8-4.6 1.6-1.6 3.2-2.9 4.6-3.8 1.7-1.1 3.1-1.7 4-1.9ZM4.4 29.2 18.8 43.6c1.1 1.1 2.6 1.3 3.9 1.2 1.3-.1 2.7-.6 4.2-1.3 3-1.4 6.4-3.8 9.5-6.9 3.1-3.1 5.5-6.5 6.9-9.5.7-1.5 1.2-2.9 1.3-4.2.1-1.3-.1-2.8-1.2-3.9L29.2 4.4c-1.3-1.3-3.2-1.3-4.9-1-1.7.4-3.6 1.2-5.6 2.4-2.3 1.5-4.9 3.6-7.1 5.8-2.3 2.3-4.3 4.9-5.8 7.1-1.2 2-2 3.9-2.4 5.6-.3 1.7-.3 3.6 1 4.9Z"
+                            />
+                        </svg>
+                    </div>
+                    <h2 className="text-lg font-bold">Encrypted Mini Vault</h2>
+                </div>
+            </header>
+
+            {/* Main */}
+            <main className="flex w-full max-w-5xl flex-1 flex-col justify-center px-4 py-10 md:px-10">
+                <div className="mx-auto w-full max-w-2xl rounded-xl bg-[#1A1D23] p-6 md:p-8">
+                    <h1 className="text-white text-3xl font-black">Securely Upload a Document</h1>
+                    <p className="text-white/60">Upload PDF or Image files to your encrypted vault.</p>
+
+                    <div className="mt-8 space-y-6">
+                        {/* Dropzone */}
+                        <label className="flex flex-col items-center gap-4 border-2 border-dashed border-white/20 rounded-lg px-6 py-12 hover:border-primary/50 hover:bg-primary/5 cursor-pointer">
+                            <span className="material-symbols-outlined text-5xl text-white/60">upload_file</span>
+                            <p className="text-white font-semibold">Drag & drop or click to choose</p>
+
+                            <input
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.png,.jpg,.jpeg"
+                                onChange={handleFileChange}
+                            />
+                        </label>
+
+                        {/* File Preview */}
+                        {file && (
+                            <div className="rounded-lg bg-white/5 p-4 flex justify-between items-center">
+                                <div>
+                                    <p className="text-white">{file.name}</p>
+                                    <p className="text-white/60 text-sm">
+                                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                </div>
+
+                                <button
+                                    className="text-white/60 hover:text-white"
+                                    onClick={() => setFile(null)}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Upload Button */}
+                        <button
+                            onClick={handleUpload}
+                            disabled={!file || uploading}
+                            className="h-10 px-5 bg-primary text-background-dark rounded-lg font-bold hover:opacity-90 disabled:opacity-40"
+                        >
+                            {uploading ? "Uploading..." : "Upload to Vault"}
+                        </button>
+
+                        {/* Progress */}
+                        {uploading && (
+                            <div className="bg-white/5 p-4 rounded-lg">
+                                <p className="text-white mb-2">Uploading… {progress}%</p>
+                                <div className="bg-black/30 rounded-full h-2">
+                                    <div
+                                        className="bg-primary h-2 rounded-full"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Status Message */}
+                        {message && <p className="text-primary">{message}</p>}
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default Upload;
+

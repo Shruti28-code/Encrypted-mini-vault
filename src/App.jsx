@@ -94,8 +94,14 @@ import Signup from "../pages/SignUp";
 import Home from "../pages/Home";
 import AppLayout from "./Components/AppLayout";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import Setting from "../pages/Setting";
 
 function App() {
+  // after successful login
+
+
+
+
   return (
     <Router>
       <Routes>
@@ -121,6 +127,16 @@ function App() {
             <ProtectedRoute>
               <AppLayout>
                 <MyDocuments />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <Setting />
               </AppLayout>
             </ProtectedRoute>
           }
