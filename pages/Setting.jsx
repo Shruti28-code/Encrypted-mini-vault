@@ -35,7 +35,7 @@ const SettingsPage = () => {
         setModalMessage("Are you sure you want to logout? Your encryption keys will be cleared from this session.");
         setModalAction(() => async () => {
             await supabase.auth.signOut();
-            navigate("/home");
+            navigate("/");
         });
         setShowModal(true);
     };
