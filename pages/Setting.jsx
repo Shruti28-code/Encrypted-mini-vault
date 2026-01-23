@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { supabase } from "../supabase";
 import { Shield, Lock, User, Mail, Key, LogOut, Trash2, AlertTriangle, CheckCircle, Settings, Clock, Database } from 'lucide-react';
 
@@ -10,6 +12,7 @@ const SettingsPage = () => {
     const [modalMessage, setModalMessage] = useState("");
     const [modalAction, setModalAction] = useState(null);
     const [isEncryptionActive, setIsEncryptionActive] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getUser = async () => {
@@ -32,7 +35,7 @@ const SettingsPage = () => {
         setModalMessage("Are you sure you want to logout? Your encryption keys will be cleared from this session.");
         setModalAction(() => async () => {
             await supabase.auth.signOut();
-            window.location.href = "/login";
+            navigate("/home");
         });
         setShowModal(true);
     };
