@@ -211,7 +211,7 @@ const Home = () => {
 
                         {/* Footer */}
                         <footer className="flex flex-col gap-6 px-5 py-10 text-center border-t border-white/5 mt-10">
-                            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                            {/* <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
                                 <a
                                     className="text-slate-400 text-sm font-normal leading-normal hover:text-[#06f9c8] transition-colors cursor-pointer"
                                     href="#"
@@ -236,7 +236,7 @@ const Home = () => {
                                 >
                                     Security
                                 </a>
-                            </div>
+                            </div> */}
                             <p className="text-slate-500 text-sm font-normal leading-normal">
                                 © 2024 Encrypted Mini Vault. All rights reserved.
                             </p>

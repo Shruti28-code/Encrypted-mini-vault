@@ -58,8 +58,8 @@ export default function AppLayout({ children }) {
                 {/* Header */}
                 <Header />
 
-                {/* Page Content */}
-                <main className="flex-1 p-10">{children}</main>
+                {/* Page Content - Added mobile padding for menu button */}
+                <main className="flex-1 p-4 pt-16 lg:pt-4 lg:p-10">{children}</main>
             </div>
         </div>
     );
