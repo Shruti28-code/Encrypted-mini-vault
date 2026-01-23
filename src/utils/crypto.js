@@ -33,13 +33,10 @@ export async function encryptFile(file, key) {
 
 
 // Decrypt file after download
-export async function decryptFile(blob, key, ivBase64) {
-    const iv = Uint8Array.from(
-        atob(ivBase64),
-        (c) => c.charCodeAt(0)
-    );
+export async function decryptFile(encryptedBlob, key, ivBase64, mimeType) {
+    const iv = Uint8Array.from(atob(ivBase64), c => c.charCodeAt(0));
 
-    const encryptedBuffer = await blob.arrayBuffer();
+    const encryptedBuffer = await encryptedBlob.arrayBuffer();
 
     const decryptedBuffer = await crypto.subtle.decrypt(
         { name: "AES-GCM", iv },
@@ -47,5 +44,5 @@ export async function decryptFile(blob, key, ivBase64) {
         encryptedBuffer
     );
 
-    return new Blob([decryptedBuffer]);
+    return new Blob([decryptedBuffer], { type: mimeType });
 }

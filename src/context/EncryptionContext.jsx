@@ -1,25 +1,20 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { generateKey } from "../utils/crypto";
 
-const EncryptionContext = createContext(null);
+import { createContext, useState } from "react";
 
-export const EncryptionProvider = ({ children }) => {
+/** Context */
+export const EncryptionContext = createContext(null);
+
+/** Provider */
+export function EncryptionProvider({ children }) {
     const [encryptionKey, setEncryptionKey] = useState(null);
 
-    useEffect(() => {
-        const initKey = async () => {
-            const key = await generateKey();
-            setEncryptionKey(key);
-        };
-
-        initKey();
-    }, []);
-
     return (
-        <EncryptionContext.Provider value={{ encryptionKey }}>
+        <EncryptionContext.Provider
+            value={{ encryptionKey, setEncryptionKey }}
+        >
             {children}
         </EncryptionContext.Provider>
     );
-};
+}
 
-export const useEncryption = () => useContext(EncryptionContext);
+

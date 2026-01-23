@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabase"; // <-- Make sure this path is correct
+import { supabase } from "../supabase";
+import { deriveKey } from "../src/utils/deriveKey";
+import { useEncryption } from "../src/context/useEncryption";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { setEncryptionKey } = useEncryption();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -12,19 +16,58 @@ const Login = () => {
     const handleLogin = async () => {
         setError("");
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
+        // 1️⃣ Authenticate user
+        const { data, error: authError } =
+            await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
 
-        if (error) {
-            setError(error.message);
+        if (authError) {
+            setError(authError.message);
             return;
         }
 
-        // ✔ Login Success → redirect to dashboard
+        const userId = data.user.id;
+
+        // 2️⃣ Fetch salt
+        const { data: saltRow, error: saltError } = await supabase
+            .from("user_keys")
+            .select("salt")
+            .eq("user_id", userId)
+            .single();
+
+        let salt = saltRow?.salt;
+
+        // 3️⃣ First login → create salt
+        if (!salt) {
+            salt = crypto.randomUUID();
+
+            const { error: insertError } = await supabase
+                .from("user_keys")
+                .insert({
+                    user_id: userId,
+                    salt,
+                });
+
+            if (insertError) {
+                setError("Failed to initialize encryption");
+                return;
+            }
+        }
+
+        // 4️⃣ Derive encryption key
+        const encryptionKey = await deriveKey(password, salt);
+        setEncryptionKey(encryptionKey);
+
+        // 5️⃣ Forget password
+        setPassword("");
+
+        // 6️⃣ Redirect
         navigate("/dashboard");
     };
+
+
 
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-[#0E1117]">

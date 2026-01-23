@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../supabase"; // <-- import your client
 import { decryptFile } from "../src/utils/crypto";
 
-import { useEncryption } from "../src/context/EncryptionContext";
+import { useEncryption } from "../src/context/useEncryption"; // ✅ import the hook
 
 export default function MyDocuments() {
     const [documents, setDocuments] = useState([]);
@@ -15,9 +15,14 @@ export default function MyDocuments() {
     const fetchDocuments = async () => {
         setLoading(true);
 
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
         const { data, error } = await supabase
             .from("documents")
             .select("*")
+            .eq("user_id", user.id)
             .order("created_at", { ascending: false });
 
         if (error) {
@@ -52,8 +57,10 @@ export default function MyDocuments() {
             const decryptedBlob = await decryptFile(
                 data,
                 encryptionKey,
-                doc.iv
+                doc.iv,
+                doc.file_type
             );
+
 
             // 3️⃣ Trigger browser download
             const url = URL.createObjectURL(decryptedBlob);
