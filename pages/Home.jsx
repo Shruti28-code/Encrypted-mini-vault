@@ -194,9 +194,7 @@ const Home = () => {
                                         <h3 className="text-white text-2xl font-bold mb-3">
                                             Ready to secure your files?
                                         </h3>
-                                        <p className="text-slate-400 text-base mb-6 max-w-2xl mx-auto">
-                                            Join thousands of users protecting their sensitive documents with client-side encryption. Get started in seconds.
-                                        </p>
+                                        <br />
                                         <button
                                             onClick={() => navigate("/signup")}
                                             className="inline-flex items-center gap-2 px-8 py-3 bg-[#06f9c8] text-[#0E1117] rounded-lg font-bold hover:brightness-110 hover:scale-105 hover:shadow-lg hover:shadow-[#06f9c8]/30 transition-all duration-200"
